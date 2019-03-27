@@ -9,7 +9,23 @@ import (
 func main() {
 	chash := consistenthash.New(10, nil)
 	chash.Add("S1", "S2", "S3")
-	fmt.Println(chash.HashRing, chash.HashMap)
-	fmt.Println(chash.Get("viveks@gmail.com"))
-	fmt.Println(chash.Get("viveksyngh@gmail.com"))
+	keys := []string{
+		"vivek@gmail.com",
+		"viveksyngh@gmail.com",
+		"john@gmail.com",
+		"mark@gmail.com",
+		"adam@gmail.com",
+		"steve@gmail.com",
+		"smith@gmail.com",
+	}
+
+	for _, key := range keys {
+		fmt.Printf("%s : %s \n", chash.Get(key), key)
+	}
+
+	fmt.Println("Removing server S1")
+	chash.Remove("S1")
+	for _, key := range keys {
+		fmt.Printf("%s : %s \n", chash.Get(key), key)
+	}
 }

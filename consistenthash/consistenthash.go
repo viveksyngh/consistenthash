@@ -1,6 +1,7 @@
 package consistenthash
 
 import (
+	"fmt"
 	"hash/crc32"
 	"sort"
 	"strconv"
@@ -80,4 +81,32 @@ func (c *ConsistentHash) Get(key string) string {
 	}
 
 	return c.HashMap[c.HashRing[0]]
+}
+
+//Remove remove a server from hash ring
+func (c *ConsistentHash) Remove(key string) {
+	if c.IsEmpty() {
+		return
+	}
+
+	for i := 0; i < c.Replicas; i++ {
+		c.removeKey(key + strconv.Itoa(i))
+	}
+}
+
+func (c *ConsistentHash) removeKey(key string) {
+	hash := c.Hash([]byte(key))
+	var i = -1
+
+	for index, item := range c.HashRing {
+		if item == hash {
+			i = index
+		}
+	}
+
+	if i != -1 {
+		c.HashRing = append(c.HashRing[:i], c.HashRing[i+1:]...)
+	} else {
+		fmt.Printf("%s not found\n", key)
+	}
 }
