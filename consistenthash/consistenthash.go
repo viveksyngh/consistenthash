@@ -55,3 +55,29 @@ func (c *ConsistentHash) Add(keys ...string) {
 		return c.HashRing[i] < c.HashRing[j]
 	})
 }
+
+//IsEmpty checks if hash map is empty or not
+func (c *ConsistentHash) IsEmpty() bool {
+	if len(c.HashRing) == 0 {
+		return true
+	}
+
+	return false
+}
+
+//Get get nearest server to store
+func (c *ConsistentHash) Get(key string) string {
+	if c.IsEmpty() {
+		return ""
+	}
+
+	hash := c.Hash([]byte(key))
+
+	for _, item := range c.HashRing {
+		if item >= hash {
+			return c.HashMap[item]
+		}
+	}
+
+	return c.HashMap[c.HashRing[0]]
+}
